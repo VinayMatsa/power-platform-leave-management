@@ -1,0 +1,16 @@
+<customapi uniquename="cto_ApproveLeaveRequest">
+  <allowedcustomprocessingsteptype>1</allowedcustomprocessingsteptype>
+  <bindingtype>1</bindingtype>
+  <boundentitylogicalname>cto_leaverequest</boundentitylogicalname>
+  <description default="Approves a leave request and stamps the approval date.">
+    <label description="Approves a leave request and stamps the approval date." languagecode="1033" />
+  </description>
+  <displayname default="Approve Leave Request">
+    <label description="Approve Leave Request" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>0</isfunction>
+  <isprivate>0</isprivate>
+  <name>cto_ApproveLeaveRequest</name>
+  <workflowsdkstepenabled>0</workflowsdkstepenabled>
+</customapi>

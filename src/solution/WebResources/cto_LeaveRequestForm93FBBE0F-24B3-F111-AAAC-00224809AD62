@@ -1,0 +1,289 @@
+// ============================================================
+// FILE:    cto_LeaveRequestForm.js
+// PURPOSE: Client script for the Leave Request form.
+//          The ONLY script library on the form (v1.0.0.4 merged
+//          five overlapping practice libraries into this one).
+//
+// Handlers registered in Form Properties:
+//   OnLoad  -> LeaveMgmt.LeaveRequest.formOnLoad
+//   OnSave  -> LeaveMgmt.LeaveRequest.formOnSave
+//   Start Date OnChange -> LeaveMgmt.LeaveRequest.datesOnChange
+// Registered in code (formOnLoad): End Date OnChange,
+//   Leave Type OnChange, Leave Balance PreSearch.
+//
+// Namespace pattern: Learn recommends "always define a unique
+// namespace for your libraries" so your functions aren't
+// overwritten by another library on the same form.
+// ============================================================
+
+var LeaveMgmt = window.LeaveMgmt || {};
+LeaveMgmt.LeaveRequest = LeaveMgmt.LeaveRequest || {};
+
+(function () {
+    "use strict";
+
+    // ---- Notification IDs. Each notification needs a unique id
+    //      so you can clear exactly the one you set. ----
+    var NOTIF_WELCOME = "cto_notif_welcome";
+    var NOTIF_DATES   = "cto_notif_dates";
+    var NOTIF_BALANCE = "cto_notif_balance";
+
+    // ---- Choice values from the Leave Types choice. In JavaScript you
+    //      always use the INTEGER, never the label. ----
+    var LEAVE_TYPE_SICK = 4002;
+    var STATUS_PENDING  = 770700000;
+
+    var MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+
+    // ========================================================
+    // 1. FORM OnLoad
+    //    Registered via Form Properties (the ONLY way for OnLoad).
+    //    Learn: "You can use the OnLoad handler to register
+    //    other handlers in code."
+    // ========================================================
+    LeaveMgmt.LeaveRequest.formOnLoad = function (executionContext) {
+
+        var formContext = executionContext.getFormContext();
+
+        // ---- A. Welcome banner, auto-cleared after 5 seconds ----
+        var userName = Xrm.Utility.getGlobalContext().userSettings.userName;
+        formContext.ui.setFormNotification(
+            "Hi " + userName + " - dates and totals are calculated automatically.",
+            "INFO",                 // "INFO" | "WARNING" | "ERROR"
+            NOTIF_WELCOME
+        );
+        window.setTimeout(function () {
+            formContext.ui.clearFormNotification(NOTIF_WELCOME);
+        }, 5000);
+
+        // ---- B. Default the status on NEW records only ----
+        //      getFormType(): 1 = Create, 2 = Update, 3 = Read Only
+        if (formContext.ui.getFormType() === 1) {
+            var status = formContext.getAttribute("cto_approvalstatus");
+            if (status && status.getValue() === null) {
+                status.setValue(STATUS_PENDING);
+            }
+        }
+
+        // ---- C. REGISTER A HANDLER IN CODE ----
+        //      cto_startdate is wired up in the UI (Step 4).
+        //      cto_enddate is wired up here, in code, so you can
+        //      compare the two approaches. Both work identically.
+        var endDate = formContext.getAttribute("cto_enddate");
+        if (endDate) {
+            endDate.addOnChange(LeaveMgmt.LeaveRequest.datesOnChange);
+        }
+
+        // ---- D. REGISTER PreSearch - CODE ONLY ----
+        //      PreSearch cannot be registered through the UI at all.
+        //      This is the canonical "code-only" event.
+        var balanceControl = formContext.getControl("cto_leavebalance");
+        if (balanceControl) {
+            balanceControl.addPreSearch(LeaveMgmt.LeaveRequest.filterBalanceLookup);
+        }
+
+        // ---- E. Sick leave: show + require Medical Notes ----
+        //      Replaces two older libraries that compared against
+        //      the wrong value (2 instead of 4002) and never fired.
+        var leaveType = formContext.getAttribute("cto_leavetype");
+        if (leaveType) {
+            leaveType.addOnChange(LeaveMgmt.LeaveRequest.leaveTypeOnChange);
+        }
+        LeaveMgmt.LeaveRequest.leaveTypeOnChange(executionContext);
+
+        // ---- F. Run the calculation once on load ----
+        LeaveMgmt.LeaveRequest.datesOnChange(executionContext);
+    };
+
+
+    // ========================================================
+    // 1b. LEAVE TYPE OnChange - Medical Notes only for Sick Leave
+    //     Server-side safety net: the business rule
+    //     "BR - Sick Leave Requires Medical Notes".
+    // ========================================================
+    LeaveMgmt.LeaveRequest.leaveTypeOnChange = function (executionContext) {
+
+        var formContext = executionContext.getFormContext();
+        var typeAttr    = formContext.getAttribute("cto_leavetype");
+        var notesAttr   = formContext.getAttribute("cto_medicalnotes");
+        var notesCtrl   = formContext.getControl("cto_medicalnotes");
+
+        // Medical Notes is a secured column: users without the
+        // "HR Medical Access" profile may not have it on the form.
+        if (!typeAttr || !notesAttr || !notesCtrl) { return; }
+
+        var isSick = typeAttr.getValue() === LEAVE_TYPE_SICK;
+
+        notesCtrl.setVisible(isSick);
+        notesAttr.setRequiredLevel(isSick ? "required" : "none");
+    };
+
+
+    // ========================================================
+    // 2. DATES OnChange - auto-calculate Total Days
+    //
+    //    A business rule CANNOT do this. Learn: business rules
+    //    "are limited in their formulas to simple addition,
+    //    subtraction, division, or multiplication of two columns."
+    //    Date arithmetic needs JavaScript.
+    // ========================================================
+    LeaveMgmt.LeaveRequest.datesOnChange = function (executionContext) {
+
+        var formContext = executionContext.getFormContext();
+
+        var startAttr = formContext.getAttribute("cto_startdate");
+        var endAttr   = formContext.getAttribute("cto_enddate");
+        var daysAttr  = formContext.getAttribute("cto_totaldays");
+        var endCtrl   = formContext.getControl("cto_enddate");
+
+        if (!startAttr || !endAttr || !daysAttr) { return; }
+
+        var start = startAttr.getValue();   // JavaScript Date or null
+        var end   = endAttr.getValue();
+
+        // ---- Nothing to calculate yet ----
+        if (!start || !end) {
+            daysAttr.setValue(null);
+            if (endCtrl) { endCtrl.clearNotification(NOTIF_DATES); }
+            return;
+        }
+
+        // ---- Invalid order: show a COLUMN-level notification ----
+        if (end < start) {
+            daysAttr.setValue(null);
+            if (endCtrl) {
+                endCtrl.setNotification(
+                    "End date cannot be before start date.",
+                    NOTIF_DATES
+                );
+            }
+            return;
+        }
+
+        if (endCtrl) { endCtrl.clearNotification(NOTIF_DATES); }
+
+        // ---- Calculate. +1 so a single-day request counts as 1. ----
+        var totalDays = Math.round((end - start) / MS_PER_DAY) + 1;
+
+        // Only write when the value changes, so opening an existing
+        // record doesn't mark the form as unsaved.
+        if (daysAttr.getValue() !== totalDays) {
+            daysAttr.setValue(totalDays);
+        }
+
+        // ---- Re-check the balance with the new number ----
+        LeaveMgmt.LeaveRequest.checkBalance(executionContext);
+    };
+
+
+    // ========================================================
+    // 3. WEB API - read the related Leave Balance record
+    //
+    //    A business rule CANNOT do this either. Learn: business
+    //    rules "can only access the columns on the form/table and
+    //    can't access rows in one-to-many or many-to-one
+    //    relationships."
+    // ========================================================
+    LeaveMgmt.LeaveRequest.checkBalance = function (executionContext) {
+
+        var formContext = executionContext.getFormContext();
+        formContext.ui.clearFormNotification(NOTIF_BALANCE);
+
+        var balanceAttr = formContext.getAttribute("cto_leavebalance");
+        var daysAttr    = formContext.getAttribute("cto_totaldays");
+        if (!balanceAttr || !daysAttr) { return; }
+
+        var balanceRef = balanceAttr.getValue();   // array of lookup objects
+        var daysWanted = daysAttr.getValue();
+        if (!balanceRef || !daysWanted) { return; }
+
+        // Lookup GUIDs come back wrapped in braces - strip them.
+        var balanceId = balanceRef[0].id.replace(/[{}]/g, "");
+
+        Xrm.WebApi.retrieveRecord(
+            "cto_leavebalance",                                   // logical name
+            balanceId,
+            "?$select=cto_daysremaining,cto_balancename"          // OData query
+        ).then(
+            function success(balance) {
+                var remaining = balance.cto_daysremaining;
+                if (daysWanted > remaining) {
+                    formContext.ui.setFormNotification(
+                        "Insufficient balance: " + daysWanted +
+                        " day(s) requested but only " + remaining +
+                        " remaining on " + balance.cto_balancename + ".",
+                        "WARNING",
+                        NOTIF_BALANCE
+                    );
+                }
+            },
+            function error(err) {
+                // openErrorDialog (message + details) gives the user a
+                // "Download Log File" button. openAlertDialog does not.
+                Xrm.Navigation.openErrorDialog({
+                    message: "Could not read the leave balance record.",
+                    details: err.message
+                });
+            }
+        );
+    };
+
+
+    // ========================================================
+    // 4. FORM OnSave - block the save
+    //    Registered via Form Properties.
+    // ========================================================
+    LeaveMgmt.LeaveRequest.formOnSave = function (executionContext) {
+
+        var formContext = executionContext.getFormContext();
+        var eventArgs   = executionContext.getEventArgs();
+
+        // getSaveMode(): 1 Save, 2 Save and Close, 59 Save and New,
+        //                70 Auto Save, 5 Deactivate, 6 Reactivate
+        var saveMode = eventArgs.getSaveMode();
+        if (saveMode === 70) {
+            return;   // don't nag the user during a 30-second autosave
+        }
+
+        var start = formContext.getAttribute("cto_startdate").getValue();
+        var end   = formContext.getAttribute("cto_enddate").getValue();
+
+        if (start && end && end < start) {
+
+            // THE LINE THAT CANCELS THE SAVE
+            eventArgs.preventDefault();
+
+            formContext.ui.setFormNotification(
+                "Save cancelled: end date is before start date.",
+                "ERROR",
+                NOTIF_DATES
+            );
+            return;
+        }
+
+        formContext.ui.clearFormNotification(NOTIF_DATES);
+    };
+
+
+    // ========================================================
+    // 5. PreSearch - filter the Leave Balance lookup
+    //    CODE-ONLY event. Cannot be registered in the UI.
+    // ========================================================
+    LeaveMgmt.LeaveRequest.filterBalanceLookup = function (executionContext) {
+
+        var formContext = executionContext.getFormContext();
+        var currentYear = new Date().getFullYear();
+
+        // FetchXML filter fragment - only balances for this year
+        var fetchFilter =
+            "<filter type='and'>" +
+                "<condition attribute='cto_year' operator='eq' value='" +
+                currentYear + "' />" +
+            "</filter>";
+
+        formContext.getControl("cto_leavebalance")
+                   .addCustomFilter(fetchFilter, "cto_leavebalance");
+    };
+
+})();

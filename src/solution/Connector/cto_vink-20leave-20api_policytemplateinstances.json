@@ -1,0 +1,1 @@
+[{"templateId":"dynamichosturl","title":"SetHostLeaveBalance","parameters":{"x-ms-apimTemplateParameter.urlTemplate":"https://@environmentVariables(\"cto_LeaveAPIHost\")","x-ms-apimTemplateParameter.hostAllowlist":"[]","x-ms-apimTemplate-operationName":["GetLeaveBalance"]}}]

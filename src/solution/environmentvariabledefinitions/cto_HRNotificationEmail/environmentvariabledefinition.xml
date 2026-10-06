@@ -1,0 +1,10 @@
+<environmentvariabledefinition schemaname="cto_HRNotificationEmail">
+  <displayname default="HR Notification Email">
+    <label description="HR Notification Email" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.1</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>1</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

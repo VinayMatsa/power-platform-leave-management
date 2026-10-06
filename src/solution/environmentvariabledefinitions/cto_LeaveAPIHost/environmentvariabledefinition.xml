@@ -1,0 +1,14 @@
+<environmentvariabledefinition schemaname="cto_LeaveAPIHost">
+  <defaultvalue>leaveapi.example.com</defaultvalue>
+  <description default="Host name of the Leave API for this environment. Used by the Leave API custom connector.">
+    <label description="Host name of the Leave API for this environment. Used by the Leave API custom connector." languagecode="1033" />
+  </description>
+  <displayname default="Leave API Host">
+    <label description="Leave API Host" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.1</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

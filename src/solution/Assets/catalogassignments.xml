@@ -1,0 +1,6 @@
+<catalogassignments>
+  <catalogassignment catalogid.uniquename="cto_LeaveEvents" object.uniquename="cto_ApproveLeaveRequest" objectidtype="customapi">
+    <iscustomizable>1</iscustomizable>
+    <name>cto_ApproveLeaveRequestAssignment</name>
+  </catalogassignment>
+</catalogassignments>

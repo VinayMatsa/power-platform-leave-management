@@ -1,0 +1,31 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+App:
+  Properties:
+    OnStart: |-
+      =// Runs once when the app opens.
+      //
+      // Why Today() is cached into a variable:
+      // Learn states DateTime is delegable EXCEPT for the functions Now() and
+      // Today(). Calling Today() directly inside a Filter() breaks delegation for
+      // the whole formula. Calling it once here and storing the result gives us a
+      // plain date value that Dataverse can handle server-side.
+      Set(varToday, Today());
+      Set(varThisYear, Year(Today()));
+
+      // Cache the signed-in user so we don't call User() repeatedly.
+      Set(varUserEmail, User().Email);
+
+      // Confirm startup in Monitor. The user sees nothing from this.
+      Trace(
+          "App started",
+          TraceSeverity.Information,
+          { User: varUserEmail, StartedAt: Text(Now(), "yyyy-mm-dd hh:mm:ss") }
+      );
+    Theme: =PowerAppsTheme

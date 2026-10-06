@@ -1,0 +1,43 @@
+<appaction uniquename="cto__Approve!167058a30d4647e2a5c37e222e13208b!cto_LeaveRequestModelDrivenAppPL400!cto_leaverequest!0">
+  <appmoduleid>
+    <uniquename>cto_LeaveRequestModelDrivenAppPL400</uniquename>
+  </appmoduleid>
+  <buttonlabeltext default="Approve">
+    <label description="Approve" languagecode="1033" />
+  </buttonlabeltext>
+  <buttontooltipdescription default="Sets the status to Approved and stamps today's date.">
+    <label description="Sets the status to Approved and stamps today's date." languagecode="1033" />
+  </buttontooltipdescription>
+  <buttontooltiptitle default="Approve leave request">
+    <label description="Approve leave request" languagecode="1033" />
+  </buttontooltiptitle>
+  <context>1</context>
+  <contextentity>
+    <logicalname>cto_leaverequest</logicalname>
+  </contextentity>
+  <contextvalue>cto_leaverequest</contextvalue>
+  <fonticon>$clientsvg:Accept</fonticon>
+  <hidden>0</hidden>
+  <iscustomizable>1</iscustomizable>
+  <isdisabled>0</isdisabled>
+  <isgrouptitlehidden>0</isgrouptitlehidden>
+  <location>0</location>
+  <name>Approve!167058a30d4647e2a5c37e222e13208b</name>
+  <onclickeventformulacomponentlibraryid>
+    <name>cto_leaverequestmodeldrivenapppl400defaultcommandlibrary_98e20</name>
+  </onclickeventformulacomponentlibraryid>
+  <onclickeventformulacomponentname>e754426281c54548bfffaa550f7b3b40</onclickeventformulacomponentname>
+  <onclickeventformulafunctionname>OnSelect</onclickeventformulafunctionname>
+  <onclickeventtype>1</onclickeventtype>
+  <origin>0</origin>
+  <sequence>100100015.0000000000</sequence>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+  <type>0</type>
+  <visibilityformulacomponentlibraryid>
+    <name>cto_leaverequestmodeldrivenapppl400defaultcommandlibrary_98e20</name>
+  </visibilityformulacomponentlibraryid>
+  <visibilityformulacomponentname>e754426281c54548bfffaa550f7b3b40</visibilityformulacomponentname>
+  <visibilityformulafunctionname>Visible</visibilityformulafunctionname>
+  <visibilitytype>1</visibilitytype>
+</appaction>

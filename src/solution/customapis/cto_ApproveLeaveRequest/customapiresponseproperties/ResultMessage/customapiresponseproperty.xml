@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="ResultMessage">
+  <description default="Human-readable outcome, including approver comments when supplied.">
+    <label description="Human-readable outcome, including approver comments when supplied." languagecode="1033" />
+  </description>
+  <displayname default="Result Message">
+    <label description="Result Message" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>cto_ApproveLeaveRequest.ResultMessage</name>
+  <type>10</type>
+</customapiresponseproperty>

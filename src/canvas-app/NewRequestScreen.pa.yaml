@@ -1,0 +1,154 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  NewRequestScreen:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+    Children:
+      - lblTitle:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(184, 0, 0, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =36
+            Size: =18
+            Text: ="New Leave Request"
+            Width: =389
+            X: =381
+            Y: =22
+      - cmbEmployee:
+          Control: Classic/ComboBox@2.4.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            ChevronBackground: =RGBA(56, 96, 178, 1)
+            ChevronFill: =RGBA(255, 255, 255, 1)
+            ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            ChevronHoverFill: =RGBA(255, 255, 255, 1)
+            DisplayFields: =["fullname"]
+            Font: =Font.'Open Sans'
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Items: =Contacts
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            SearchFields: =["fullname"]
+            SelectMultiple: =false
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            SelectionFill: =RGBA(56, 96, 178, 1)
+            X: =425
+            Y: =92
+      - drpLeaveType:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            ChevronBackground: =RGBA(56, 96, 178, 1)
+            ChevronFill: =RGBA(255, 255, 255, 1)
+            ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            ChevronHoverFill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Items: =Choices('Leave Requests'.'Leave Type')
+            Items.Value: =Value
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            SelectionFill: =RGBA(56, 96, 178, 1)
+            X: =425
+            Y: =163
+      - dpStartDate:
+          Control: Classic/DatePicker@2.6.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            IconBackground: =RGBA(56, 96, 178, 1)
+            IconFill: =RGBA(255, 255, 255, 1)
+            X: =425
+            Y: =337
+      - dpEndDate:
+          Control: Classic/DatePicker@2.6.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            IconBackground: =RGBA(56, 96, 178, 1)
+            IconFill: =RGBA(255, 255, 255, 1)
+            X: =425
+            Y: =424
+      - txtReason:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =43
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =328
+            X: =425
+            Y: =505
+      - txtMedicalNotes:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Visible: |-
+              =drpLeaveType.Selected.Value = 'Leave Types'.'Sick Leave'
+              //drpLeaveType.Selected = 'Leave Types'.'Sick Leave'
+              //drpLeaveType.Selected.Value = "Sick Leave"
+            Width: =328
+            X: =425
+            Y: =578
+      - cmbBalance:
+          Control: Classic/ComboBox@2.4.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            ChevronBackground: =RGBA(56, 96, 178, 1)
+            ChevronFill: =RGBA(255, 255, 255, 1)
+            ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            ChevronHoverFill: =RGBA(255, 255, 255, 1)
+            DisplayFields: =["cto_balancename"]
+            Font: =Font.'Open Sans'
+            HoverFill: =RGBA(186, 202, 226, 1)
+            IsSearchable: =false
+            Items: |-
+              =Filter(
+                  'Leave Balances',
+                  Employee.Contact = cmbEmployee.Selected.Contact,
+                  Year = varThisYear
+              )
+              //Filter('Leave Balances', cmbEmployee.Selected.Contact = cmbEmployee.Selected.Contact && Year = Year(Today()))
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            SearchFields: =["cto_balancename"]
+            SelectMultiple: =false
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            SelectionFill: =RGBA(56, 96, 178, 1)
+            X: =425
+            Y: =243
+      - Button2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: "=// ═══════════════════════════════════════════════════════\r\n// 1. TRACE — developer diagnostics. Invisible to the user.\r\n// ═══════════════════════════════════════════════════════\r\nTrace(\r\n    \"Leave submission started\",\r\n    TraceSeverity.Information,\r\n    {\r\n        User: varUserEmail,\r\n        Employee: cmbEmployee.Selected.'Full Name',\r\n        LeaveType: drpLeaveType.Selected.Value\r\n    }\r\n);\r\n\r\n// ═══════════════════════════════════════════════════════\r\n// 2. VALIDATE — Notify = user. Trace = Monitor.\r\n// ═══════════════════════════════════════════════════════\r\n/*\r\nIf(\r\n    IsBlank(cmbEmployee.Selected),\r\n        Notify(\"Please select an employee.\", NotificationType.Error);\r\n        Trace(\"Validation failed: no employee\", TraceSeverity.Warning),\r\n\r\n    IsBlank(dpStartDate.SelectedDate) || IsBlank(dpEndDate.SelectedDate),\r\n        Notify(\"Please choose a start and an end date.\", NotificationType.Error);\r\n        Trace(\"Validation failed: blank dates\", TraceSeverity.Warning),\r\n\r\n    dpEndDate.SelectedDate < dpStartDate.SelectedDate,\r\n        Notify(\"End date cannot be before start date.\", NotificationType.Error);\r\n        Trace(\"Validation failed: end before start\", TraceSeverity.Warning),\r\n\r\n    // .Value gives an OptionSetValue — matches the right-hand side's type.\r\n    drpLeaveType.Selected.Value = 'Leave Types'.'Sick Leave' && IsBlank(txtMedicalNotes.Text),\r\n        Notify(\"Sick leave requires medical notes.\", NotificationType.Error);\r\n        Trace(\"Validation failed: sick leave without notes\", TraceSeverity.Warning),\r\n*/\r\n    // ═══════════════════════════════════════════════════\r\n    // 3. ALL CHECKS PASSED — write the record\r\n    // ═══════════════════════════════════════════════════\r\n    IfError(\r\n        Set(\r\n            varNewRequest,\r\n            Patch(\r\n                'Leave Requests',\r\n                Defaults('Leave Requests'),\r\n                {\r\n                    'Request Number': \"LR-\" & Text(Now(), \"yyyymmddhhmmss\"),\r\n                    Employee:         cmbEmployee.Selected,\r\n                    'Leave Balance':  cmbBalance.Selected,\r\n                    'Leave Type':     drpLeaveType.Selected.Value,\r\n                    'Start Date':     dpStartDate.SelectedDate,\r\n                    'End Date':       dpEndDate.SelectedDate,\r\n                    'Total Days':    /*DateDiff(\r\n                                          dpStartDate.SelectedDate,\r\n                                          dpEndDate.SelectedDate,\r\n                                          TimeUnit.Days\r\n                                      ) +*/ 1,\r\n                    'Approval Status': 'Approval Status (Leave Requests)'.Pending,\r\n                    Reason:           txtReason.Text,\r\n                    'Medical Notes':  txtMedicalNotes.Text\r\n                }\r\n            )\r\n        ),\r\n\r\n        // ---- On failure ----\r\n        Notify(\"Could not save: \" & FirstError.Message, NotificationType.Error);\r\n        Trace(\"Patch failed: \" & FirstError.Message, TraceSeverity.Error,\r\n              { User: varUserEmail }),\r\n\r\n        // ---- On success ----\r\n        Notify(\"Request \" & varNewRequest.'Request Number' & \" submitted.\",\r\n               NotificationType.Success);\r\n        Trace(\"Leave submission succeeded\", TraceSeverity.Information,\r\n              { RequestNumber: varNewRequest.'Request Number' });\r\n        Reset(cmbEmployee); Reset(drpLeaveType); Reset(cmbBalance);\r\n        Reset(txtReason); Reset(txtMedicalNotes);\r\n        Reset(dpStartDate); Reset(dpEndDate);\r\n        Navigate(LeaveListScreen, ScreenTransition.Cover)\r\n    \r\n);"
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Create"
+            X: =522
+            Y: =642

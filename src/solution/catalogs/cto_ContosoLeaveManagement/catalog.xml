@@ -1,0 +1,10 @@
+<catalog uniquename="cto_ContosoLeaveManagement">
+  <description default="Root catalog for the Leave Management solution.">
+    <label description="Root catalog for the Leave Management solution." languagecode="1033" />
+  </description>
+  <displayname default="Leave Management">
+    <label description="Leave Management" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Leave Management</name>
+</catalog>

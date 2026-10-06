@@ -1,0 +1,13 @@
+<catalog uniquename="cto_LeaveEvents">
+  <description default="Groups leave lifecycle events for the Leave Management solution.">
+    <label description="Groups leave lifecycle events for the Leave Management solution." languagecode="1033" />
+  </description>
+  <displayname default="Leave Events">
+    <label description="Leave Events" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>Leave Management Leave Events</name>
+  <parentcatalogid>
+    <uniquename>cto_ContosoLeaveManagement</uniquename>
+  </parentcatalogid>
+</catalog>
