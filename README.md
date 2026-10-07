@@ -2,7 +2,7 @@
 
 A leave request and approval solution built on **Dataverse**, with model-driven and canvas apps, form JavaScript, a Custom API with a business event, a custom connector with C# script code, and Power Automate approvals.
 
-> **Personal project.** I built it in my own developer environment to practise Power Platform developer (PL-400) skills hands-on. It uses sample data only and has no link to any employer or client.
+> **Personal project.** I built it in my own developer environment to practice Power Platform developer skills hands-on. It uses sample data only and has no link to any employer or client.
 
 ---
 
